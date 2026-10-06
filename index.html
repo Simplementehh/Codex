@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#742b42">
+  <meta name="description" content="Mil preguntas para salir del libreto. Un juego de tarjetas para conversar, sorprenderte y reír con quien está contigo.">
+  <title>Fuera del libreto · Una pregunta puede llevarte a cualquier parte</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+  <script src="data/questions.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="Fuera del libreto, inicio"><span class="brand-mark" aria-hidden="true"><i></i><i><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m19 2 3 12 10-8 3 3-10 10 13 1v4l-13 1 9 10-3 3-9-10-2 13h-4l-1-13-10 8-3-3 10-9-12-2v-4l12-1-8-10 3-3 9 10V2Z" fill="currentColor"/></svg></i></span><span>Fuera del libreto</span></a>
+    <button class="how-button" id="how-button" aria-haspopup="dialog">¿Cómo jugamos? <span aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+  </header>
+  <main>
+    <section class="intro" aria-labelledby="headline">
+      <p class="eyebrow">UN RATITO PARA SALIR DE LO DE SIEMPRE</p>
+      <h1 id="headline">Salgámonos del <em>libreto.</em></h1>
+      <p class="subtitle">Tú sacas la tarjeta. La otra persona responde. Después cambian.</p>
+    </section>
+    <fieldset class="filters" id="filters">
+      <legend class="sr-only">Elige el tipo de preguntas</legend>
+      <label><input type="radio" name="mood" value="all" checked><span>De todo un poco</span></label>
+      <label><input type="radio" name="mood" value="curious"><span>Qué curioso</span></label>
+      <label><input type="radio" name="mood" value="personal"><span>Un poco más allá</span></label>
+      <label><input type="radio" name="mood" value="playful"><span>Una buena tontera</span></label>
+    </fieldset>
+    <section class="game" aria-label="Mazo de preguntas">
+      <div class="doodle doodle-left" aria-hidden="true"><svg viewBox="0 0 120 140"><path d="M12 92c-6-38 29-57 47-38s37 0 45-31M84 25l21-6-4 24M34 113l23 5m-19 15 20-10"/></svg></div>
+      <div class="doodle doodle-right" aria-hidden="true"><svg viewBox="0 0 170 160"><path d="M4 97c47-7 40 61 91 40s-1-42-2-12 46 33 61 6M143 96c-20-20-24 7 6 22 20-25 12-44-6-22M120 23l12-18m2 34 22-4m-22 20 18 11"/></svg></div>
+      <div class="deck" id="deck">
+        <div class="back-card coral" aria-hidden="true"><span><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m19 2 3 12 10-8 3 3-10 10 13 1v4l-13 1 9 10-3 3-9-10-2 13h-4l-1-13-10 8-3-3 10-9-12-2v-4l12-1-8-10 3-3 9 10V2Z" fill="currentColor"/></svg></span></div>
+        <div class="back-card wine" aria-hidden="true"><span>♡</span></div>
+        <article class="question-card" id="card" aria-labelledby="question" tabindex="0" role="button" aria-label="Sacar una tarjeta">
+          <p class="card-label" id="card-label">MIL PREGUNTAS. CERO GUION.</p>
+          <span class="card-star" aria-hidden="true"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m19 2 3 12 10-8 3 3-10 10 13 1v4l-13 1 9 10-3 3-9-10-2 13h-4l-1-13-10 8-3-3 10-9-12-2v-4l12-1-8-10 3-3 9 10V2Z" fill="currentColor"/></svg></span>
+          <div class="question-wrap" aria-live="polite" aria-atomic="true"><h2 id="question">Una pregunta puede llevarte a <em>cualquier parte.</em></h2></div>
+          <div class="card-bottom"><span id="card-category">¿Vemos qué sale?</span><span id="card-number">001 — 1000</span></div>
+        </article>
+      </div>
+      <div class="actions">
+        <button class="primary-button" id="draw-button"><span id="draw-label">Saca una tarjeta</span><span aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+        <button class="skip-button" id="skip-button" hidden>Esta la paso <span aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 9a8 8 0 1 0 1 7M14 9h6V3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+      </div>
+      <p class="progress" id="progress" aria-live="polite">1.000 preguntas distintas. Sin apuro.</p>
+    </section>
+    <footer><span class="tiny-star" aria-hidden="true"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m19 2 3 12 10-8 3 3-10 10 13 1v4l-13 1 9 10-3 3-9-10-2 13h-4l-1-13-10 8-3-3 10-9-12-2v-4l12-1-8-10 3-3 9 10V2Z" fill="currentColor"/></svg></span> Sin respuestas correctas. Sin obligación de responder. <span class="tiny-star" aria-hidden="true"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m19 2 3 12 10-8 3 3-10 10 13 1v4l-13 1 9 10-3 3-9-10-2 13h-4l-1-13-10 8-3-3 10-9-12-2v-4l12-1-8-10 3-3 9 10V2Z" fill="currentColor"/></svg></span></footer>
+  </main>
+  <dialog id="how-dialog" aria-labelledby="how-title">
+    <button class="close-button" id="close-dialog" aria-label="Cerrar instrucciones">×</button>
+    <p class="eyebrow">LAS REGLAS CABEN EN UNA TARJETA</p>
+    <h2 id="how-title">Menos guion.<br><em>Más conversación.</em></h2>
+    <ol><li>Saca una tarjeta y lee la pregunta a quien está contigo.</li><li>Escucha la respuesta. Si les dan ganas, respondan ambos.</li><li>Cambien de turno y saquen otra.</li></ol>
+    <p>¿No les tinca una pregunta? Pásenla. Pueden elegir un tono o mezclar de todo. No hay puntajes ni respuestas correctas.</p>
+    <p class="dialog-note">Las tarjetas no se repiten hasta terminar el mazo de ese tono. Tu avance se guarda en este navegador cuando el almacenamiento está disponible.</p>
+    <button class="primary-button" id="lets-play">Ya, juguemos <span aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+  </dialog>
+  <noscript><p class="noscript">Activa JavaScript en tu navegador para sacar las tarjetas.</p></noscript>
+</body>
+</html>
