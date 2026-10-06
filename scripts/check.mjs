@@ -33,7 +33,7 @@ assert.equal(categories.size, 20);
 for (const [category, count] of categories) assert.equal(count, 50, `Cantidad incorrecta en ${category}`);
 const html = readFileSync(resolve(root, 'index.html'), 'utf8');
 for (const match of html.matchAll(/(?:src|href)="([^"#]+)"/g)) {
-  const asset = match[1];
+  const asset = match[1].split('?')[0];
   if (asset === './' || asset.startsWith('https:')) continue;
   assert.ok(!asset.startsWith('/'), `La ruta ${asset} debe ser relativa para GitHub Pages.`);
   assert.ok(existsSync(resolve(root, asset)), `Falta el recurso ${asset}.`);

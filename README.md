@@ -39,3 +39,16 @@ GitHub Pages es gratuito para repositorios públicos en GitHub Free. No hace fal
 - `scripts/check.mjs`: validación del catálogo y los recursos públicos.
 
 Para editar una tarjeta conserva su identificador. Revisa claridad y diferencias de contenido, además de ejecutar la validación. Los controles se pueden utilizar con teclado y las animaciones respetan la preferencia de movimiento reducido.
+
+## Criterio para escribir preguntas
+
+La revisión editorial del 6 de octubre de 2026 cubrió las 1.000 tarjetas y reescribió 727 preguntas. Los identificadores se conservaron para mantener el avance guardado.
+
+- Usa español natural para conversar en Chile: ropa, pieza, celular, arrendar. No agregues modismos a la fuerza.
+- Cada tarjeta debe entenderse al leerla en voz alta, sin explicar una metáfora o una regla inventada.
+- El humor puede ser absurdo, pero la situación debe ser fácil de imaginar. Prefiere personas, anécdotas y una sola condición hipotética.
+- Evita acertijos, situaciones fantásticas encadenadas y objetos que deban declarar, negociar o explicar sus intenciones.
+- No repitas la misma pregunta cambiando solo unas palabras. Revisa también los temas cercanos, no únicamente los duplicados exactos.
+- Conserva preguntas curiosas y personales que ya sean claras. No hay que convertir todo en un chiste.
+
+Al publicar una revisión, actualiza el parámetro de versión de los recursos en `index.html` para que el navegador descargue el catálogo nuevo.
