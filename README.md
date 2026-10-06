@@ -4,9 +4,9 @@ Una página web de tarjetas para conversar, sorprenderse y reír. Mil preguntas 
 
 ## Jugar
 
-Saca una tarjeta, hazle la pregunta a quien está contigo y cambien de turno. Elige un tono o mezcla todos. Puedes pasar cualquier pregunta. No hay puntajes ni obligación de responder.
+Saca una tarjeta, hazle la pregunta a quien está contigo y cambien de turno. Abre la caja, toca la tarjeta para darle vuelta y descubre la pregunta. Todas las preguntas van mezcladas. Puedes pasar cualquier pregunta. No hay puntajes ni obligación de responder.
 
-El mazo evita repeticiones hasta agotarse. Cambiar de tono conserva las tarjetas ya vistas. El avance se guarda localmente en el navegador; si el almacenamiento está bloqueado, el juego sigue funcionando durante la sesión. No hay cuentas, analíticas ni envío de respuestas.
+El mazo evita repeticiones hasta agotarse. El avance se guarda localmente en el navegador; si el almacenamiento está bloqueado, el juego sigue funcionando durante la sesión. No hay cuentas, analíticas ni envío de respuestas.
 
 ## Desarrollo local
 
@@ -34,7 +34,7 @@ GitHub Pages es gratuito para repositorios públicos en GitHub Free. No hace fal
 
 - `index.html`: página y diálogo de instrucciones.
 - `styles.css`: diseño crema, coral y vino, adaptable a pantallas pequeñas.
-- `app.js`: sorteo sin repetición, filtros y persistencia local.
+- `app.js`: caja animada, giro de tarjetas, sorteo sin repetición y persistencia local.
 - `data/questions.js`: catálogo completo, sin preguntas generadas al jugar.
 - `scripts/check.mjs`: validación del catálogo y los recursos públicos.
 
