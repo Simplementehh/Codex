@@ -6,3 +6,6 @@
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}dialog::backdrop{backdrop-filter:none}}
 @media(max-width:370px){.deck{width:calc(100vw - 90px)}.coral{transform:rotate(-7deg) translateX(-12px)}.wine{transform:rotate(7deg) translateX(12px)}}
 .brand-mark svg{width:18px;height:18px;vertical-align:middle}.card-star svg{width:36px;height:36px}.coral svg{width:53px;height:53px}.tiny-star svg{width:12px;height:12px;vertical-align:middle}.how-button svg{width:13px;height:13px;vertical-align:middle}.primary-button svg{width:22px;height:22px;vertical-align:middle}.skip-button svg{width:14px;height:14px;vertical-align:middle}
+@media(max-width:370px){#question{font-size:25px}#question.long{font-size:23px}#question.extra-long{font-size:22px}.card-star{margin:14px 0 8px}.card-star svg{width:29px;height:29px}}
+@media(max-width:700px){#question.long{font-size:26px}#question.extra-long{font-size:24px}.card-star{margin:16px 0 10px}.card-star svg{width:32px;height:32px}}
+@media(max-width:370px){#question.long{font-size:23px}#question.extra-long{font-size:22px}.card-star{margin:14px 0 8px}.card-star svg{width:29px;height:29px}}

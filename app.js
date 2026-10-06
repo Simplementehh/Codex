@@ -35,8 +35,8 @@
   function render(animate = false, reset = false) {
     if (current) {
       question.textContent = current.text;
-      question.classList.toggle('long', current.text.length > 90);
-      question.classList.toggle('extra-long', current.text.length > 120);
+      question.classList.toggle('long', current.text.length > 65);
+      question.classList.toggle('extra-long', current.text.length > 95);
       document.querySelector('#card-label').textContent = 'PREGÚNTALE A QUIEN ESTÁ CONTIGO';
       document.querySelector('#card-category').textContent = current.category;
       document.querySelector('#card-number').textContent = String(current.id).padStart(3, '0');
