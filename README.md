@@ -4,7 +4,7 @@ Una página web de tarjetas para conversar, sorprenderse y reír. Mil preguntas 
 
 ## Jugar
 
-La página abre directamente con una pregunta. Léesela a quien está contigo y cambien de turno. El botón «Siguiente pregunta» muestra otra carta.
+Sofi recibe a los jugadores en una portada ilustrada. «Juguemos» abre el mazo con una pregunta. Léesela a quien está contigo y cambien de turno. El botón «Siguiente pregunta» muestra otra carta.
 
 El mazo evita repeticiones hasta agotarse. El avance se guarda localmente en el navegador; si el almacenamiento está bloqueado, el juego sigue funcionando durante la sesión. No hay cuentas, analíticas ni envío de respuestas.
 
@@ -33,8 +33,8 @@ GitHub Pages es gratuito para repositorios públicos en GitHub Free. No hace fal
 ## Estructura
 
 - `index.html`: página y diálogo de instrucciones.
-- `styles.css`: cartas verticales en azul y durazno, adaptables a pantallas pequeñas.
-- `app.js`: cambio animado de preguntas, sorteo sin repetición y persistencia local.
+- `styles.css`: mesa violeta iluminada, cartas verticales con grosor y sombras, botones con relieve y portada de Sofi; adaptable a pantallas pequeñas.
+- `app.js`: portada, inclinación del mazo, cambio animado de preguntas, sorteo sin repetición y persistencia local.
 - `data/questions.js`: catálogo completo, sin preguntas generadas al jugar.
 - `scripts/check.mjs`: validación del catálogo y los recursos públicos.
 

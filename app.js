@@ -7,6 +7,9 @@
   const text = document.querySelector('#question');
   const button = document.querySelector('#next-button');
   const dialog = document.querySelector('#how-dialog');
+  const welcome = document.querySelector('#welcome');
+  const game = document.querySelector('#game');
+  const deck = document.querySelector('#deck');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   let seen = new Set(), current = null, busy = false;
   try {
@@ -44,18 +47,31 @@
     try { await card.animate(frames, options).finished; } catch { /* A canceled animation does not stop play. */ }
   }
   async function next() {
-    if (busy) return;
+    if (busy || game.hidden) return;
     busy = true; button.disabled = true;
-    await animate([{transform:'translate(0,0) rotate(0)',opacity:1},{transform:'translate(90px,-20px) rotate(9deg)',opacity:0}],{duration:180,easing:'ease-in'});
+    await animate([{transform:'translate(0,0) rotate(0)',opacity:1},{transform:'translate3d(130px,-55px,90px) rotateZ(15deg) rotateY(-22deg)',opacity:0}],{duration:180,easing:'ease-in'});
     pick(); render();
-    await animate([{transform:'translate(-35px,25px) rotate(-5deg)',opacity:0},{transform:'translate(0,0) rotate(0)',opacity:1}],{duration:290,easing:'ease-out'});
+    await animate([{transform:'translate3d(-30px,60px,-100px) rotateZ(-7deg) rotateX(18deg)',opacity:0},{transform:'translate(0,0) rotate(0)',opacity:1}],{duration:290,easing:'ease-out'});
     document.querySelector('#announcement').textContent = current.text;
     busy = false; button.disabled = false;
   }
+  function start() {
+    welcome.hidden = true; game.hidden = false;
+    button.focus({preventScroll:true});
+    window.scrollTo({top:0,behavior:'auto'});
+  }
+  document.querySelector('#start-button').addEventListener('click', start);
+  deck.addEventListener('pointermove', event => {
+    if (busy || reducedMotion.matches || !matchMedia('(hover:hover)').matches) return;
+    const r=deck.getBoundingClientRect();
+    deck.style.setProperty('--rx', `${-(event.clientY-r.top-r.height/2)/r.height*9}deg`);
+    deck.style.setProperty('--ry', `${(event.clientX-r.left-r.width/2)/r.width*11}deg`);
+  });
+  deck.addEventListener('pointerleave', () => {deck.style.setProperty('--rx','0deg');deck.style.setProperty('--ry','0deg');});
   button.addEventListener('click', next);
   document.querySelector('#how-button').addEventListener('click', () => dialog.showModal());
   document.querySelector('#close-dialog').addEventListener('click', () => dialog.close());
-  document.querySelector('#lets-play').addEventListener('click', () => dialog.close());
+  document.querySelector('#lets-play').addEventListener('click', () => { dialog.close(); if (game.hidden) start(); });
   dialog.addEventListener('click', event => {
     if (event.target !== dialog) return;
     const bounds = dialog.getBoundingClientRect();

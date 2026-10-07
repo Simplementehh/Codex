@@ -3,27 +3,69 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#a9c8fa">
+  <meta name="theme-color" content="#201847">
   <meta name="description" content="Fuera del libreto. Cartas con preguntas para conversar y reír juntos.">
   <title>Fuera del libreto</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261007-cartas">
-  <link rel="stylesheet" href="styles.css?v=20261007-cartas">
-  <script src="data/questions.js?v=20261007-cartas" defer></script>
-  <script src="app.js?v=20261007-cartas" defer></script>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261007-arcade">
+  <link rel="stylesheet" href="styles.css?v=20261007-arcade">
+  <script src="data/questions.js?v=20261007-arcade" defer></script>
+  <script src="app.js?v=20261007-arcade" defer></script>
 </head>
 <body>
   <header><h1>fuera del <em>libreto.</em></h1><button id="how-button" aria-haspopup="dialog" aria-label="Cómo jugar">?</button></header>
   <main>
+    <section class="welcome" id="welcome" aria-labelledby="welcome-title">
+      <div class="sofi-scene">
+        <div class="character-halo"></div>
+        <svg class="sofi" viewBox="0 0 320 390" role="img" aria-label="Sofi, la anfitriona del juego, saludando con una carta">
+          <defs>
+            <linearGradient id="hair" x2="1" y2="1"><stop stop-color="#55418f"/><stop offset="1" stop-color="#211633"/></linearGradient>
+            <linearGradient id="skin" x2="1" y2="1"><stop stop-color="#ffdfbc"/><stop offset="1" stop-color="#e99f85"/></linearGradient>
+            <linearGradient id="jacket" x2=".7" y2="1"><stop stop-color="#bba4ff"/><stop offset="1" stop-color="#7654d0"/></linearGradient>
+            <filter id="shadow"><feDropShadow dx="0" dy="7" stdDeviation="4" flood-color="#211633" flood-opacity=".3"/></filter>
+          </defs>
+          <g filter="url(#shadow)">
+            <path d="M81 192C53 129 63 54 132 36c74-21 128 30 122 101 0 44 24 55 7 91L81 244Z" fill="url(#hair)"/>
+            <path d="M85 373 92 280c4-52 34-73 70-73 53 0 72 26 81 61l17 105Z" fill="url(#jacket)"/>
+            <path d="m142 194-5 31q22 27 48 0l-7-35" fill="url(#skin)"/>
+            <ellipse cx="163" cy="130" rx="64" ry="79" fill="url(#skin)"/>
+            <path d="M98 119q-5-75 63-80 70-2 71 86-37-12-53-55-29 42-81 49Z" fill="url(#hair)"/>
+            <path d="M115 134q12-12 24 0M181 134q12-12 24 0" fill="none" stroke="#39243d" stroke-width="5" stroke-linecap="round"/>
+            <path d="M148 167q18 28 39-1" fill="#fff8ed" stroke="#a55b65" stroke-width="3"/>
+            <ellipse cx="123" cy="154" rx="12" ry="6" fill="#f08e9b" opacity=".6"/><ellipse cx="203" cy="154" rx="12" ry="6" fill="#f08e9b" opacity=".6"/>
+            <path d="M112 266q-27-17-36-61l-30 8q4 75 54 102" fill="url(#jacket)"/>
+            <path d="M48 215q-17-20-20-42l-7-27q-1-9 7-8l12 26-3-43q0-10 9-7l9 45 1-47q2-11 10-6l3 50 10-33q5-10 11-2l-8 47q18-13 22-5 3 6-11 24l-18 27Z" fill="url(#skin)"/>
+            <path d="M211 278q28-5 31-31l30 12q-2 60-53 62" fill="url(#jacket)"/>
+            <rect x="233" y="179" width="57" height="84" rx="8" fill="#f6c86e" stroke="#fff2ca" stroke-width="3" transform="rotate(12 260 220)"/>
+            <text x="262" y="234" text-anchor="middle" font-size="42" fill="#543b83">?</text>
+            <path d="M245 267q-10-19 3-29l19-9q11-2 9 8l-14 8 16-1q10 3 3 11l-16 15Z" fill="url(#skin)"/>
+            <path d="M131 252 151 275 167 250 184 275 204 251" fill="none" stroke="#e1d5ff" stroke-width="4" stroke-linejoin="round"/>
+            <circle cx="165" cy="311" r="16" fill="#f6c86e"/><path d="m165 300 3 8 9 3-9 3-3 8-3-8-9-3 9-3Z" fill="#7752cb"/>
+          </g>
+        </svg>
+        <span class="sofi-name">SOFI</span>
+      </div>
+      <div class="welcome-bubble">
+        <p class="hello" id="welcome-title">¡Hola! Soy Sofi.</p>
+        <p>Qué bueno que estén acá. Los quiero invitar a <strong>salirse del libreto.</strong></p>
+        <p>Saquen una carta y léanle la pregunta a la otra persona. Después cambian de turno.</p>
+        <button class="next-button" id="start-button">Juguemos <span aria-hidden="true">→</span></button>
+      </div>
+    </section>
+    <section class="game" id="game" aria-label="Juego de preguntas" hidden>
+    <div class="table-glow" aria-hidden="true"></div>
     <div class="deck" id="deck">
+      <div class="stack stack-three" aria-hidden="true"></div>
       <div class="stack stack-one" aria-hidden="true"></div><div class="stack stack-two" aria-hidden="true"></div>
       <article class="card" id="card" aria-label="Carta de pregunta">
-        <span class="corner corner-top" aria-hidden="true">✳&#xfe0e;</span>
+        <span class="corner corner-top" aria-hidden="true">✦</span>
         <p class="card-label">FUERA DEL LIBRETO</p>
         <div class="question-wrap"><h2 id="question"></h2></div>
-        <span class="corner corner-bottom" aria-hidden="true">✳&#xfe0e;</span>
+        <span class="corner corner-bottom" aria-hidden="true">✦</span>
       </article>
     </div>
     <button class="next-button" id="next-button">Siguiente pregunta <span aria-hidden="true">→</span></button>
+    </section>
     <p class="sr-only" id="announcement" aria-live="polite" aria-atomic="true"></p>
   </main>
   <dialog id="how-dialog" aria-labelledby="how-title">
