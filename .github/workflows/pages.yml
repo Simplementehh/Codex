@@ -33,10 +33,9 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Preparar la página pública
         run: |
-          mkdir -p _site/data _site/assets
+          mkdir -p _site/data
           cp index.html styles.css app.js favicon.svg .nojekyll _site/
           cp data/questions.js _site/data/
-          cp assets/sofi.png _site/assets/
       - name: Subir la página
         uses: actions/upload-pages-artifact@v3
         with:
