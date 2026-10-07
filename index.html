@@ -6,10 +6,10 @@
   <meta name="theme-color" content="#201847">
   <meta name="description" content="Fuera del libreto. Cartas con preguntas para conversar y reír juntos.">
   <title>Fuera del libreto</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261007-arcade">
-  <link rel="stylesheet" href="styles.css?v=20261007-arcade">
-  <script src="data/questions.js?v=20261007-arcade" defer></script>
-  <script src="app.js?v=20261007-arcade" defer></script>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261007-modos">
+  <link rel="stylesheet" href="styles.css?v=20261007-modos">
+  <script src="data/questions.js?v=20261007-modos" defer></script>
+  <script src="app.js?v=20261007-modos" defer></script>
 </head>
 <body>
   <header><h1>fuera del <em>libreto.</em></h1><button id="how-button" aria-haspopup="dialog" aria-label="Cómo jugar">?</button></header>
@@ -49,10 +49,20 @@
         <p class="hello" id="welcome-title">¡Hola! Soy Sofi.</p>
         <p>Qué bueno que estén acá. Los quiero invitar a <strong>salirse del libreto.</strong></p>
         <p>Saquen una carta y léanle la pregunta a la otra persona. Después cambian de turno.</p>
-        <button class="next-button" id="start-button">Juguemos <span aria-hidden="true">→</span></button>
+        <div class="mode-options" aria-label="Elige cómo jugar">
+          <button class="next-button" id="random-button">Lo que salga <span aria-hidden="true">✦</span></button>
+          <button class="next-button safe-button" id="safe-button">Vámonos a la segura <span aria-hidden="true">→</span></button>
+        </div>
       </div>
     </section>
+    <section class="categories" id="categories" aria-labelledby="categories-title" hidden>
+      <button class="back-button" id="categories-back">← Volver</button>
+      <h2 id="categories-title" tabindex="-1">Vámonos a la segura</h2>
+      <p>¿De qué quieren conversar?</p>
+      <div class="category-grid" id="category-grid"></div>
+    </section>
     <section class="game" id="game" aria-label="Juego de preguntas" hidden>
+    <div class="game-navigation"><button class="back-button" id="change-mode">← Cambiar modo</button><span id="topic-label"></span></div>
     <div class="table-glow" aria-hidden="true"></div>
     <div class="deck" id="deck">
       <div class="stack stack-three" aria-hidden="true"></div>
@@ -72,7 +82,7 @@
     <button class="close-button" id="close-dialog" aria-label="Cerrar">×</button>
     <h2 id="how-title">¿Cómo jugamos?</h2>
     <p>Léele la pregunta a la otra persona. Después cambian de turno.</p>
-    <p>Para seguir, toca «Siguiente pregunta».</p>
+    <p>«Lo que salga» mezcla todos los temas. En «Vámonos a la segura» eligen una categoría.</p><p>Para seguir, toca «Siguiente pregunta».</p>
     <button class="next-button" id="lets-play">Juguemos <span aria-hidden="true">→</span></button>
   </dialog>
   <noscript><p>Activa JavaScript para ver las preguntas.</p></noscript>

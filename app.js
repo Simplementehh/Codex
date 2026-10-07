@@ -9,6 +9,9 @@
   const dialog = document.querySelector('#how-dialog');
   const welcome = document.querySelector('#welcome');
   const game = document.querySelector('#game');
+  const categories = document.querySelector('#categories');
+  const topicLabel = document.querySelector('#topic-label');
+  let selectedCategory = null, intro = false, introShown = false;
   const deck = document.querySelector('#deck');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   let seen = new Set(), current = null, busy = false;
@@ -21,10 +24,11 @@
   } catch { /* The game also works without browser storage. */ }
   function pick() {
     const lastId = current?.id;
-    let remaining = questions.filter(q => !seen.has(q.id) && q.id !== lastId);
+    const pool = selectedCategory ? questions.filter(q => q.category === selectedCategory) : questions;
+    let remaining = pool.filter(q => !seen.has(q.id) && q.id !== lastId);
     if (!remaining.length) {
-      remaining = questions.filter(q => !seen.has(q.id));
-      if (!remaining.length) { seen.clear(); remaining = questions.filter(q => q.id !== lastId); }
+      remaining = pool.filter(q => !seen.has(q.id));
+      if (!remaining.length) { pool.forEach(q => seen.delete(q.id)); remaining = pool.filter(q => q.id !== lastId); }
     }
     let index;
     if (globalThis.crypto?.getRandomValues) {
@@ -36,6 +40,11 @@
     current = remaining[index];
   }
   function render() {
+    if (intro) {
+      text.textContent = '¿Estamos listos para jugar?';
+      text.classList.remove('long','extra-long');
+      return;
+    }
     seen.add(current.id);
     text.textContent = current.text;
     text.classList.toggle('long', current.text.length > 65);
@@ -48,19 +57,52 @@
   }
   async function next() {
     if (busy || game.hidden) return;
-    busy = true; button.disabled = true;
+    busy = true; button.disabled = true; document.querySelector('#change-mode').disabled = true;
     await animate([{transform:'translate(0,0) rotate(0)',opacity:1},{transform:'translate3d(130px,-55px,90px) rotateZ(15deg) rotateY(-22deg)',opacity:0}],{duration:180,easing:'ease-in'});
-    pick(); render();
+    intro = false; pick(); render();
     await animate([{transform:'translate3d(-30px,60px,-100px) rotateZ(-7deg) rotateX(18deg)',opacity:0},{transform:'translate(0,0) rotate(0)',opacity:1}],{duration:290,easing:'ease-out'});
     document.querySelector('#announcement').textContent = current.text;
-    busy = false; button.disabled = false;
+    busy = false; button.disabled = false; document.querySelector('#change-mode').disabled = false;
   }
-  function start() {
-    welcome.hidden = true; game.hidden = false;
-    button.focus({preventScroll:true});
+  function show(screen) {
+    welcome.hidden = screen !== welcome;
+    categories.hidden = screen !== categories;
+    game.hidden = screen !== game;
     window.scrollTo({top:0,behavior:'auto'});
   }
-  document.querySelector('#start-button').addEventListener('click', start);
+  function startRandom() {
+    selectedCategory = null;
+    intro = !introShown;
+    introShown = true;
+    if (!intro) pick();
+    render(); topicLabel.textContent = 'Lo que salga';
+    show(game); button.focus({preventScroll:true});
+    document.querySelector('#announcement').textContent = text.textContent;
+  }
+  function showCategories() {
+    show(categories);
+    document.querySelector('#categories-title').focus({preventScroll:true});
+  }
+  document.querySelector('#random-button').addEventListener('click', startRandom);
+  document.querySelector('#safe-button').addEventListener('click', showCategories);
+  document.querySelector('#categories-back').addEventListener('click', () => {show(welcome); document.querySelector('#safe-button').focus({preventScroll:true});});
+  document.querySelector('#change-mode').addEventListener('click', () => {
+    if (busy) return;
+    if (selectedCategory) showCategories();
+    else {show(welcome); document.querySelector('#random-button').focus({preventScroll:true});}
+  });
+  for (const category of new Set(questions.map(q => q.category))) {
+    const option = document.createElement('button');
+    option.className = 'category-button';
+    option.textContent = category;
+    option.addEventListener('click', () => {
+      selectedCategory = category; intro = false;
+      pick(); render(); topicLabel.textContent = category;
+      show(game); button.focus({preventScroll:true});
+      document.querySelector('#announcement').textContent = current.text;
+    });
+    document.querySelector('#category-grid').append(option);
+  }
   deck.addEventListener('pointermove', event => {
     if (busy || reducedMotion.matches || !matchMedia('(hover:hover)').matches) return;
     const r=deck.getBoundingClientRect();
@@ -71,12 +113,11 @@
   button.addEventListener('click', next);
   document.querySelector('#how-button').addEventListener('click', () => dialog.showModal());
   document.querySelector('#close-dialog').addEventListener('click', () => dialog.close());
-  document.querySelector('#lets-play').addEventListener('click', () => { dialog.close(); if (game.hidden) start(); });
+  document.querySelector('#lets-play').addEventListener('click', () => { dialog.close(); if (game.hidden && categories.hidden) { show(welcome); document.querySelector('#random-button').focus({preventScroll:true}); } });
   dialog.addEventListener('click', event => {
     if (event.target !== dialog) return;
     const bounds = dialog.getBoundingClientRect();
     if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close();
   });
-  if (!current) pick();
-  render();
+  // Questions are drawn only when a mode is entered, never behind the welcome screen.
 })();

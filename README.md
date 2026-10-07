@@ -4,9 +4,9 @@ Una página web de tarjetas para conversar, sorprenderse y reír. Mil preguntas 
 
 ## Jugar
 
-Sofi recibe a los jugadores en una portada ilustrada. «Juguemos» abre el mazo con una pregunta. Léesela a quien está contigo y cambien de turno. El botón «Siguiente pregunta» muestra otra carta.
+Sofi recibe a los jugadores en una portada ilustrada. La portada ofrece «Lo que salga» para mezclar todos los temas y «Vámonos a la segura» para elegir una de las 20 categorías. «Lo que salga» muestra «¿Estamos listos para jugar?» la primera vez que se entra durante cada carga de la página; después muestra preguntas. Esa bienvenida no cuenta como pregunta ni altera el mazo. Léesela a quien está contigo y cambien de turno. El botón «Siguiente pregunta» muestra otra carta.
 
-El mazo evita repeticiones hasta agotarse. El avance se guarda localmente en el navegador; si el almacenamiento está bloqueado, el juego sigue funcionando durante la sesión. No hay cuentas, analíticas ni envío de respuestas.
+El mazo evita repeticiones hasta agotarse. Al agotar una categoría, solo se reinician las preguntas de esa categoría; el resto del historial se conserva. El avance se guarda localmente en el navegador; si el almacenamiento está bloqueado, el juego sigue funcionando durante la sesión. No hay cuentas, analíticas ni envío de respuestas.
 
 ## Desarrollo local
 
