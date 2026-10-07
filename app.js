@@ -2,28 +2,27 @@
 (() => {
   const questions = window.FDL_QUESTIONS;
   const storageKey = 'fuera-del-libreto-v1';
-  const scene = document.querySelector('#table-scene');
-  const box = document.querySelector('#box-button');
-  const deck = document.querySelector('#deck');
-  const card = document.querySelector('#card');
-  const flyer = document.querySelector('#card-flyer');
-  const face = document.querySelector('#question-face');
-  const question = document.querySelector('#question');
-  const drawButton = document.querySelector('#draw-button');
-  const drawLabel = document.querySelector('#draw-label');
-  const skip = document.querySelector('#skip-button');
-  const hint = document.querySelector('#table-hint');
-  const progress = document.querySelector('#progress');
-  const announcement = document.querySelector('#announcement');
-  const dialog = document.querySelector('#how-dialog');
+  const $ = selector => document.querySelector(selector);
+  const welcome = $('#welcome');
+  const game = $('#game-screen');
+  const table = $('#play-table');
+  const choices = $('#choices');
+  const single = $('#single-card');
+  const card = $('#card');
+  const face = $('#question-face');
+  const reverse = $('#card-reverse');
+  const question = $('#question');
+  const drawButton = $('#draw-button');
+  const skip = $('#skip-button');
+  const dialog = $('#how-dialog');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const validIds = new Set(questions.map(q => q.id));
   let seen = new Set();
   let current = null;
-  let revealed = false;
-  let stage = 'closed';
-  let busy = false;
   let lastId = null;
+  let stage = 'choice';
+  let revealed = false;
+  let busy = false;
   let storageAvailable = true;
   let resetMessage = false;
   try {
@@ -31,8 +30,6 @@
     if (saved?.version === 1) {
       seen = new Set((Array.isArray(saved.seen) ? saved.seen : []).filter(id => validIds.has(id)));
       current = questions.find(q => q.id === saved.current) || null;
-      // Every visit starts with the box and the card face down; keep the saved question and progress.
-      revealed = false;
       lastId = current?.id || null;
     }
   } catch { storageAvailable = false; }
@@ -40,33 +37,43 @@
     try { localStorage.setItem(storageKey, JSON.stringify({ version: 1, seen: [...seen], current: current?.id || null, revealed })); }
     catch { storageAvailable = false; }
   }
+  function setBusy(value) {
+    busy = value;
+    drawButton.disabled = value;
+    $('#back-home').disabled = value;
+    choices.querySelectorAll('button').forEach(button => { button.disabled = value; });
+    skip.disabled = value;
+    card.setAttribute('aria-disabled', String(value));
+  }
+  function announce(text) { $('#announcement').textContent = text; }
   function render() {
-    scene.dataset.stage = stage;
-    const open = stage !== 'closed';
-    deck.hidden = !open;
-    box.disabled = open;
-    box.tabIndex = open ? -1 : 0;
-    box.setAttribute('aria-hidden', String(open));
-    card.classList.toggle('is-revealed', revealed);
-    face.setAttribute('aria-hidden', String(!revealed));
+    const choosing = stage === 'choice';
+    table.dataset.stage = stage;
+    choices.hidden = !choosing;
+    single.hidden = choosing;
+    $('#actions').hidden = choosing;
+    face.hidden = !revealed;
+    reverse.hidden = revealed;
     face.inert = !revealed;
+    face.setAttribute('aria-hidden', String(!revealed));
     card.setAttribute('aria-label', revealed ? 'Volver a poner la tarjeta boca abajo' : 'Dar vuelta la tarjeta');
-    drawLabel.textContent = !open ? 'Abramos la caja' : revealed ? 'Saca otra tarjeta' : 'Dale vuelta';
-    hint.textContent = !open ? 'Las buenas conversaciones empiezan abriendo una caja.' : revealed ? 'Hazle esta pregunta a quien está contigo.' : 'Ya está en tus manos. Tócala y veamos qué sale.';
-    skip.hidden = !open || !revealed;
+    $('#game-title').textContent = choosing ? '¿Cuál te tinca?' : revealed ? 'Te toca escuchar.' : 'Dale vuelta.';
+    $('#draw-label').textContent = revealed ? 'Elige otra carta' : 'Dale vuelta';
+    $('#draw-button > span:last-child').textContent = revealed ? '→' : '↻';
+    $('#sofi-tip').textContent = choosing ? 'Elige la que te tinque. La sorpresa está al otro lado.' : revealed ? 'Léele la pregunta a la otra persona. Después cambian de turno.' : 'Ahora tócala para darle vuelta. ¡Veamos qué sale!';
+    skip.hidden = choosing || !revealed;
     if (current) {
       question.textContent = current.text;
       question.classList.toggle('long', current.text.length > 65);
       question.classList.toggle('extra-long', current.text.length > 95);
-      document.querySelector('#card-number').textContent = String(current.id).padStart(3, '0');
+      $('#card-number').textContent = String(current.id).padStart(3, '0');
     }
-    progress.textContent = !open ? '1.000 preguntas. Una caja llena de sorpresas.' : `${resetMessage ? 'Mazo completo. Volvemos a mezclar. ' : ''}${seen.size} de 1000 descubiertas · ${storageAvailable ? 'Sin repetir hasta terminar el mazo.' : 'Avance guardado solo mientras esta página siga abierta.'}`;
+    $('#progress').textContent = `${resetMessage ? 'Mazo completo. Volvemos a mezclar. ' : ''}${seen.size ? `${seen.size} de 1000 descubiertas` : '1.000 preguntas mezcladas'} · ${storageAvailable ? 'Sin repetir hasta terminar el mazo.' : 'Avance guardado solo mientras esta página siga abierta.'}`;
   }
   function pick() {
     let remaining = questions.filter(q => !seen.has(q.id) && q.id !== lastId);
     resetMessage = false;
     if (!remaining.length) {
-      // An unrevealed last card is still available; a fully seen deck starts a new round.
       if (seen.size < questions.length) remaining = questions.filter(q => !seen.has(q.id));
       else { seen.clear(); remaining = questions.filter(q => q.id !== lastId); resetMessage = true; }
     }
@@ -81,80 +88,85 @@
   }
   async function animate(element, frames, options) {
     if (reducedMotion.matches) return;
-    try { await element.animate(frames, options).finished; } catch { /* A canceled visual effect does not interrupt the game. */ }
+    try { await element.animate(frames, options).finished; } catch { /* Canceled decoration does not interrupt the game. */ }
   }
-  function announce(text) { announcement.textContent = text; }
-  async function openBox() {
-    if (busy || stage !== 'closed') return;
-    busy = true;
-    scene.classList.add('box-opening');
-    announce('Abriendo la caja de cartas.');
-    await animate(document.querySelector('.box-lid'), [
-      { transform: 'translate(0, 0) rotate(-5deg)', opacity: 1 },
-      { transform: 'translate(20px, -65px) rotate(9deg)', opacity: 1, offset: .45 },
-      { transform: 'translate(110px, -170px) rotate(22deg)', opacity: 0 }
-    ], { duration: 680, easing: 'cubic-bezier(.22,.8,.3,1)', fill: 'forwards' });
-    stage = 'open';
-    if (!current) pick();
-    persist(); render();
-    await animate(flyer, [
-      { transform: 'translateY(140px) rotate(-16deg) scale(.78)', opacity: 0 },
-      { transform: 'translateY(-25px) rotate(5deg) scale(1.02)', opacity: 1, offset: .72 },
+  function enterGame() {
+    if (busy) return;
+    welcome.hidden = true; game.hidden = false;
+    stage = 'choice'; revealed = false; resetMessage = false; render();
+    game.classList.remove('screen-enter'); void game.offsetWidth; game.classList.add('screen-enter');
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    $('#game-title').focus({ preventScroll: true });
+    announce('Elige una de las tres cartas.');
+  }
+  function backHome() {
+    if (busy) return;
+    game.hidden = true; welcome.hidden = false;
+    welcome.classList.remove('screen-enter'); void welcome.offsetWidth; welcome.classList.add('screen-enter');
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    $('#enter-game').focus({ preventScroll: true });
+  }
+  async function choose(color) {
+    if (busy || game.hidden || stage !== 'choice') return;
+    setBusy(true); stage = 'card'; single.dataset.color = color;
+    pick(); persist(); render();
+    await animate(single, [
+      { transform: 'translateY(75px) rotate(-12deg) scale(.85)', opacity: 0 },
+      { transform: 'translateY(-12px) rotate(3deg) scale(1.02)', opacity: 1, offset: .72 },
       { transform: 'translateY(0) rotate(0) scale(1)', opacity: 1 }
-    ], { duration: 720, easing: 'cubic-bezier(.2,.75,.25,1)' });
-    scene.classList.remove('box-opening'); busy = false;
-    if (revealed) announce(current.text); else announce('Tarjeta boca abajo. Tócala para darle vuelta.');
-    // Move focus only when opening hid the focused box.
-    if (document.activeElement === box || document.activeElement === document.body) card.focus({ preventScroll: true });
+    ], { duration: 470, easing: 'cubic-bezier(.2,.75,.25,1)' });
+    setBusy(false);
+    announce('Tu carta está boca abajo. Tócala para darle vuelta.');
+    if (!dialog.open) card.focus({ preventScroll: true });
   }
-  function flip() {
-    if (busy || stage === 'closed') return;
+  async function flip() {
+    if (busy || game.hidden || stage !== 'card') return;
+    setBusy(true);
+    // Switch explicit visible faces halfway through a 2D flip; no stacked 3D layers or lingering box.
+    await animate(card, [{ transform: 'scaleX(1)' }, { transform: 'scaleX(.06) rotate(-3deg)' }], { duration: 170, easing: 'ease-in' });
     revealed = !revealed;
     if (revealed) seen.add(current.id);
     persist(); render();
-    announce(revealed ? `Pregúntale a quien está contigo: ${current.text}` : 'Tarjeta boca abajo. Puedes volver a darle vuelta.');
-    if (revealed && !reducedMotion.matches) {
-      scene.classList.remove('celebrate'); void scene.offsetWidth; scene.classList.add('celebrate');
-    }
+    await animate(card, [
+      { transform: 'scaleX(.06) rotate(3deg)' },
+      { transform: 'scaleX(1.03) rotate(-1deg)', offset: .8 },
+      { transform: 'scaleX(1) rotate(0)' }
+    ], { duration: 260, easing: 'ease-out' });
+    setBusy(false);
+    announce(revealed ? `Pregúntale a quien está contigo: ${current.text}` : 'Carta boca abajo. Puedes volver a darle vuelta.');
+    if (revealed && !reducedMotion.matches) { table.classList.remove('celebrate'); void table.offsetWidth; table.classList.add('celebrate'); }
+    if (document.activeElement === skip && skip.hidden) drawButton.focus({ preventScroll: true });
   }
-  async function draw() {
-    if (busy || stage === 'closed') return;
-    busy = true;
-    const fromSkip = document.activeElement === skip;
-    await animate(flyer, [
-      { transform: 'translate(0, 0) rotate(0)', opacity: 1 },
-      { transform: 'translate(110px, -65px) rotate(18deg)', opacity: 0 }
-    ], { duration: 240, easing: 'ease-in' });
-    // Disable the rotation transition while replacing the departing card.
-    card.classList.add('no-flip'); pick(); persist(); render();
-    void card.offsetWidth; card.classList.remove('no-flip');
-    await animate(flyer, [
-      { transform: 'translate(-80px, 100px) rotate(-18deg) scale(.85)', opacity: 0 },
-      { transform: 'translate(0, -15px) rotate(3deg) scale(1.01)', opacity: 1, offset: .75 },
-      { transform: 'translate(0, 0) rotate(0) scale(1)', opacity: 1 }
-    ], { duration: 480, easing: 'cubic-bezier(.2,.75,.25,1)' });
-    busy = false;
-    announce('Nueva tarjeta. Tócala para darle vuelta.');
-    if (fromSkip) drawButton.focus({ preventScroll: true });
+  async function another() {
+    if (busy || game.hidden || stage !== 'card') return;
+    setBusy(true);
+    await animate(single, [
+      { transform: 'translate(0,0) rotate(0)', opacity: 1 },
+      { transform: 'translate(80px,-45px) rotate(15deg)', opacity: 0 }
+    ], { duration: 260, easing: 'ease-in' });
+    stage = 'choice'; revealed = false; resetMessage = false; persist(); render();
+    await animate(choices, [{ transform: 'translateY(22px) scale(.95)', opacity: 0 }, { transform: 'translateY(0) scale(1)', opacity: 1 }], { duration: 260, easing: 'ease-out' });
+    setBusy(false);
+    announce('Ahora elige otra carta.');
+    if (!dialog.open) choices.querySelector('button').focus({ preventScroll: true });
   }
-  function primaryAction() { if (busy) return; if (stage === 'closed') openBox(); else if (!revealed) flip(); else draw(); }
-  box.addEventListener('click', openBox);
-  drawButton.addEventListener('click', primaryAction);
-  skip.addEventListener('click', draw);
+  $('#enter-game').addEventListener('click', enterGame);
+  $('#back-home').addEventListener('click', backHome);
+  $('#home-link').addEventListener('click', event => { event.preventDefault(); backHome(); });
+  choices.querySelectorAll('button').forEach(button => { button.addEventListener('click', () => choose(button.dataset.color)); });
+  drawButton.addEventListener('click', () => revealed ? another() : flip());
+  skip.addEventListener('click', another);
   card.addEventListener('click', flip);
-  card.addEventListener('keydown', event => {
-    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); flip(); }
-  });
+  card.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); flip(); } });
   card.addEventListener('pointermove', event => {
-    if (busy || !matchMedia('(hover: hover)').matches || reducedMotion.matches) return;
+    if (busy || reducedMotion.matches || !matchMedia('(hover: hover)').matches) return;
     const bounds = card.getBoundingClientRect();
-    card.style.setProperty('--tilt-x', `${-(event.clientY - bounds.top - bounds.height / 2) / bounds.height * 9}deg`);
-    card.style.setProperty('--tilt-y', `${(event.clientX - bounds.left - bounds.width / 2) / bounds.width * 12}deg`);
+    card.style.setProperty('--card-tilt', `${(event.clientX - bounds.left - bounds.width / 2) / bounds.width * 3}deg`);
   });
-  card.addEventListener('pointerleave', () => { card.style.setProperty('--tilt-x', '0deg'); card.style.setProperty('--tilt-y', '0deg'); });
-  document.querySelector('#how-button').addEventListener('click', () => dialog.showModal());
-  document.querySelector('#close-dialog').addEventListener('click', () => dialog.close());
-  document.querySelector('#lets-play').addEventListener('click', () => { dialog.close(); if (stage === 'closed') openBox(); });
+  card.addEventListener('pointerleave', () => card.style.setProperty('--card-tilt', '0deg'));
+  $('#how-button').addEventListener('click', () => dialog.showModal());
+  $('#close-dialog').addEventListener('click', () => dialog.close());
+  $('#lets-play').addEventListener('click', () => { dialog.close(); if (game.hidden) enterGame(); });
   dialog.addEventListener('click', event => { if (event.target === dialog) { const r = dialog.getBoundingClientRect(); if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) dialog.close(); } });
   render();
 })();

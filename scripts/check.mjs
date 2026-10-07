@@ -39,4 +39,5 @@ for (const match of html.matchAll(/(?:src|href)="([^"#]+)"/g)) {
   assert.ok(existsSync(resolve(root, asset)), `Falta el recurso ${asset}.`);
 }
 assert.ok(existsSync(resolve(root, '.nojekyll')));
+assert.ok(existsSync(resolve(root, 'assets/sofi.png')), 'Falta Sofi en la portada.');
 console.log('✓ 1.000 preguntas únicas, 20 temas, tonos y recursos listos para GitHub Pages.');
